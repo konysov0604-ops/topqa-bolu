@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ГРАФИКТЕР ӘЛЕМІ – МАТЕМАТИКАЛЫҚ МИССИЯ</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#020b36;
+  color:white;
+}
+button,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:default}
+main{max-width:1800px;margin:auto}
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  padding:12px 3%;
+  background:#061747;
+}
+.control{
+  padding:12px 18px;
+  color:white;
+  background:linear-gradient(#254fba,#102458);
+  border:1px solid #70caff;
+  border-radius:12px;
+}
+.control:hover{filter:brightness(1.2)}
+.scene{
+  width:100%;
+  aspect-ratio:16/9;
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+.reference{
+  display:block;
+  width:100%;
+  height:100%;
+}
+.box{
+  position:absolute;
+  top:33%;
+  width:20%;
+  height:32%;
+  border:0;
+  background:transparent;
+  border-radius:30%;
+  perspective:700px;
+}
+.box:nth-of-type(1){left:4%}
+.box:nth-of-type(2){left:26.8%}
+.box:nth-of-type(3){left:49%}
+.box:hover:not(:disabled){
+  box-shadow:0 0 30px #fff7;
+}
+.box:focus-visible,.action:focus-visible{
+  outline:4px solid white;
+  outline-offset:3px;
+}
+.lid{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:54%;
+  opacity:0;
+  transform-origin:50% 0;
+  pointer-events:none;
+}
+.light{
+  position:absolute;
+  inset:10% 5% 0;
+  border-radius:30%;
+  opacity:0;
+  background:radial-gradient(
+    ellipse,#fff 0%,#fff1a8dd 25%,#3cbdff00 72%
+  );
+  pointer-events:none;
+}
+.box.open .lid{
+  opacity:1;
+  animation:openLid 1.5s ease-in-out;
+}
+.box.open .light{animation:shine 1.5s ease-in-out}
+@keyframes openLid{
+  0%,100%{transform:translateY(0) rotateX(0)}
+  40%,65%{
+    transform:translateY(-75%) rotateX(32deg) rotate(-9deg);
+  }
+}
+@keyframes shine{
+  0%,100%{opacity:0}
+  35%,70%{opacity:1;transform:scale(1.2)}
+}
+.result{
+  position:absolute;
+  left:76.5%;
+  top:38%;
+  width:17.5%;
+  height:23%;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  text-align:center;
+  color:#0c123b;
+}
+.student{
+  min-height:64%;
+  padding:4%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff0df;
+  font-weight:900;
+  line-height:1.05;
+  overflow-wrap:anywhere;
+  font-size:clamp(10px,2.8vw,48px);
+}
+.team{
+  padding:5% 1%;
+  border-radius:30px;
+  background:linear-gradient(#ffec8d,#ffb516);
+  color:#472300;
+  font-size:clamp(6px,1.55vw,28px);
+  font-weight:900;
+  box-shadow:0 2px 8px #a66a23;
+}
+.action{
+  position:absolute;
+  top:83.5%;
+  height:11%;
+  border:0;
+  background:transparent;
+  border-radius:60px;
+}
+.action:hover:not(:disabled){
+  box-shadow:0 0 25px #82dfff,inset 0 0 18px #ffffff55;
+}
+.reset{left:15.8%;width:19%}
+.save{left:36%;width:25%}
+.clear{left:62.5%;width:22%}
+.status{
+  margin:12px;
+  padding:8px;
+  text-align:center;
+  font-size:18px;
+  font-weight:bold;
+  color:#ffe895;
+}
+.rosters{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  padding:10px 3% 30px;
+}
+.roster{
+  padding:18px;
+  border:1px solid #27b7ff;
+  border-radius:20px;
+  background:linear-gradient(150deg,#123d81,#071439);
+}
+.roster:nth-child(2){
+  border-color:#bf5aff;
+  background:linear-gradient(150deg,#482480,#100c36);
+}
+.roster:nth-child(3){
+  border-color:#f8c756;
+  background:linear-gradient(150deg,#60451e,#171127);
+}
+.roster h2{font-size:18px;margin:0 0 14px}
+.roster ol{padding-left:25px;font-size:17px;line-height:1.8}
+.empty{color:#b5c6e6}
+dialog{
+  width:min(560px,94vw);
+  padding:26px;
+  color:white;
+  background:#0b1d4a;
+  border:2px solid #5abfff;
+  border-radius:22px;
+  box-shadow:0 0 80px #187bff66;
+}
+dialog::backdrop{
+  background:#000b;
+  backdrop-filter:blur(5px);
+}
+dialog h1{margin-top:0;font-size:26px}
+dialog p{line-height:1.5;color:#cedfff}
+textarea{
+  width:100%;
+  padding:16px;
+  font-size:18px;
+  resize:vertical;
+  color:white;
+  background:#030f30;
+  border:1px solid #5b84c0;
+  border-radius:12px;
+}
+.dialog-actions{
+  display:flex;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:16px;
+}
+.primary{background:linear-gradient(#8b44e9,#5124a5)}
+.confetti{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.particle{
+  position:absolute;
+  width:8px;
+  height:15px;
+  animation:fall 1.6s ease-in forwards;
+}
+@keyframes fall{
+  to{
+    transform:translate(var(--dx),300px) rotate(600deg);
+    opacity:0;
+  }
+}
+@media(max-width:650px){
+  .toolbar{justify-content:center;padding:10px}
+  .control{padding:10px;font-size:14px}
+  #progress{
+    order:3;
+    flex-basis:100%;
+    text-align:center;
+    font-size:14px;
+  }
+  .rosters{grid-template-columns:1fr;gap:10px}
+  .roster{padding:14px}
+  .status{font-size:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important}
+}
+</style>
+</head>
+
+<body>
+<main>
+  <div class="toolbar">
+    <button class="control" id="edit">☷ Оқушылар тізімі</button>
+    <span id="progress"></span>
+    <button class="control" id="sound" aria-pressed="true">
+      ♫ Дыбыс қосулы
+    </button>
+  </div>
+
+  <section class="scene" aria-label="Математикалық миссия">
+    <img
+      class="reference"
+      id="reference"
+      src="reference.jpeg"
+      alt="Графиктер әлемі – Математикалық миссия"
+    >
+
+    <button class="box" aria-label="1-топ PARALLEL қорабын ашу">
+      <span class="light"></span>
+      <img class="lid" alt="">
+    </button>
+
+    <button class="box" aria-label="2-топ INTERSECTION қорабын ашу">
+      <span class="light"></span>
+      <img class="lid" alt="">
+    </button>
+
+    <button class="box" aria-label="3-топ COORDINATE қорабын ашу">
+      <span class="light"></span>
+      <img class="lid" alt="">
+    </button>
+
+    <div class="result" aria-live="polite">
+      <div class="student" id="student">Өз тобыңды анықта!</div>
+      <div class="team" id="team">Қорапты таңда</div>
+    </div>
+
+    <button
+      class="action reset"
+      id="reset"
+      aria-label="ҚАЙТА БӨЛУ"
+      title="Қайта бөлу"
+    ></button>
+
+    <button
+      class="action save"
+      id="save"
+      aria-label="НӘТИЖЕНІ БЕКІТУ"
+      title="Нәтижені бекіту"
+    ></button>
+
+    <button
+      class="action clear"
+      id="clear"
+      aria-label="ТІЗІМДІ ТАЗАЛАУ"
+      title="Тізімді тазалау"
+    ></button>
+
+    <div class="confetti" id="confetti"></div>
+  </section>
+
+  <p class="status" id="status" role="status">
+    Бастау үшін оқушылар тізімін енгізіңіз.
+  </p>
+
+  <section class="rosters" id="rosters" aria-label="Топ құрамы"></section>
+</main>
+
+<dialog id="editor">
+  <form method="dialog">
+    <h1>Оқушылар тізімі</h1>
+    <p>
+      Әр оқушыны жаңа жолға жазыңыз немесе дайын тізімді
+      толық көшіріп қойыңыз.
+    </p>
+
+    <textarea
+      id="names"
+      rows="10"
+      aria-label="Оқушылардың аты-жөні"
+      placeholder="Аружан Әлиева&#10;Әли Омаров&#10;Айша Нұрланқызы"
+    ></textarea>
+
+    <p id="hint">
+      Бірдей жазылған есімдер бір рет қана алынады.
+      Аттас оқушылардың тегін де жазыңыз.
+    </p>
+
+    <div class="dialog-actions">
+      <button class="control" value="cancel">Жабу</button>
+      <button class="control primary" type="button" id="start">
+        Тізімді қолдану
+      </button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+"use strict";
+
+const $ = selector => document.querySelector(selector);
+const labels = ["PARALLEL", "INTERSECTION", "COORDINATE"];
+const storageKey = "grafikter-mission-github-v1";
+const boxes = [...document.querySelectorAll(".box")];
+
+let state = {
+  names: [],
+  remaining: [],
+  groups: [[], [], []],
+  fixed: false,
+  last: null
+};
+
+let busy = false;
+let soundEnabled = true;
+let audioContext;
+
+function randomIndex(length) {
+  const values = new Uint32Array(1);
+  const limit = Math.floor(4294967296 / length) * length;
+  do {
+    crypto.getRandomValues(values);
+  } while (values[0] >= limit);
+  return values[0] % length;
+}
+
+function parseNames(text) {
+  const names = text
+    .split(/[\n;,]+/)
+    .map(name => name.trim().replace(/^\d+[.)]\s*/, ""))
+    .filter(Boolean);
+
+  return [...new Set(names)];
+}
+
+function eligibleGroups() {
+  const minimum = Math.min(...state.groups.map(group => group.length));
+
+  return state.groups
+    .map((group, index) => group.length === minimum ? index : -1)
+    .filter(index => index >= 0);
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(state));
+    return true;
+  } catch {
+    $("#status").textContent =
+      "Браузерде сақтау қолжетімсіз. Топ құрамын көшіріп алыңыз.";
+    return false;
+  }
+}
+
+function showLast() {
+  if (state.last) {
+    $("#student").textContent = state.last.name;
+    $("#team").textContent =
+      `${state.last.group + 1}-топ · ${labels[state.last.group]}`;
+  } else {
+    $("#student").textContent = "Өз тобыңды анықта!";
+    $("#team").textContent = "Қорапты таңда";
+  }
+}
+
+function render() {
+  const assigned = state.names.length - state.remaining.length;
+
+  $("#progress").textContent =
+    `Барлығы: ${state.names.length} · ` +
+    `Бөлінді: ${assigned} · Қалды: ${state.remaining.length}`;
+
+  const articles = state.groups.map((group, index) => {
+    const article = document.createElement("article");
+    article.className = "roster";
+
+    const heading = document.createElement("h2");
+    heading.textContent =
+      `${index + 1}-топ ${labels[index]} · ${group.length} оқушы`;
+    article.append(heading);
+
+    if (group.length) {
+      const list = document.createElement("ol");
+
+      group.forEach(name => {
+        const item = document.createElement("li");
+        item.textContent = name;
+        list.append(item);
+      });
+
+      article.append(list);
+    } else {
+      const empty = document.createElement("p");
+      empty.className = "empty";
+      empty.textContent = "Оқушылар әлі бөлінген жоқ";
+      article.append(empty);
+    }
+
+    return article;
+  });
+
+  $("#rosters").replaceChildren(...articles);
+
+  const eligible = eligibleGroups();
+
+  boxes.forEach((box, index) => {
+    box.disabled =
+      busy ||
+      state.fixed ||
+      !state.remaining.length ||
+      !eligible.includes(index);
+
+    box.title = !eligible.includes(index)
+      ? "Тең бөлу үшін басқа қорапты таңдаңыз"
+      : `${index + 1}-топ ${labels[index]}`;
+  });
+
+  ["reset", "save", "clear", "edit"].forEach(id => {
+    $("#" + id).disabled = busy;
+  });
+}
+
+function playSound() {
+  if (!soundEnabled) return;
+
+  try {
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    audioContext ||= new Audio();
+    audioContext.resume();
+
+    [523.25, 659.25, 783.99, 1046.5].forEach((frequency, index) => {
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      const start = audioContext.currentTime + index * 0.12;
+
+      oscillator.type = "sine";
+      oscillator.frequency.value = frequency;
+
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.12, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+      oscillator.start(start);
+      oscillator.stop(start + 0.5);
+    });
+  } catch {}
+}
+
+function launchConfetti() {
+  const colors = ["#ffd657", "#24c5ff", "#b25aff", "#ffffff"];
+
+  for (let index = 0; index < 65; index++) {
+    const particle = document.createElement("i");
+    particle.className = "particle";
+
+    particle.style.left = `${20 + randomIndex(65)}%`;
+    particle.style.top = `${25 + randomIndex(25)}%`;
+    particle.style.background = colors[randomIndex(colors.length)];
+    particle.style.setProperty("--dx", `${randomIndex(400) - 200}px`);
+    particle.style.animationDelay = `${randomIndex(250)}ms`;
+
+    $("#confetti").append(particle);
+    setTimeout(() => particle.remove(), 2100);
+  }
+}
+
+function resetDistribution() {
+  if (busy) return;
+
+  state.remaining = [...state.names];
+  state.groups = [[], [], []];
+  state.fixed = false;
+  state.last = null;
+
+  showLast();
+
+  $("#status").textContent = state.names.length
+    ? "Жасырын қорапты таңда да, өз тобыңды біл!"
+    : "Бастау үшін оқушылар тізімін енгізіңіз.";
+
+  saveState();
+  render();
+}
+
+boxes.forEach((box, groupIndex) => {
+  box.addEventListener("click", () => {
+    if (
+      busy ||
+      state.fixed ||
+      !state.remaining.length ||
+      !eligibleGroups().includes(groupIndex)
+    ) return;
+
+    busy = true;
+
+    const studentIndex = randomIndex(state.remaining.length);
+    const name = state.remaining.splice(studentIndex, 1)[0];
+
+    state.groups[groupIndex].push(name);
+    state.last = { name, group: groupIndex };
+
+    saveState();
+    render();
+    box.classList.add("open");
+    playSound();
+
+    setTimeout(() => {
+      showLast();
+      launchConfetti();
+
+      $("#status").textContent = state.remaining.length
+        ? `${name} — ${groupIndex + 1}-топта! Келесі қорапты таңдаңыз.`
+        : "ТОПҚА БӨЛУ АЯҚТАЛДЫ";
+    }, 650);
+
+    setTimeout(() => {
+      box.classList.remove("open");
+      busy = false;
+      render();
+    }, 1550);
+  });
+});
+
+$("#edit").addEventListener("click", () => {
+  $("#names").value = state.names.join("\n");
+  $("#editor").showModal();
+});
+
+$("#start").addEventListener("click", () => {
+  const names = parseNames($("#names").value);
+
+  if (!names.length) {
+    $("#hint").textContent =
+      "Кемінде бір оқушының аты-жөнін енгізіңіз.";
+    $("#names").focus();
+    return;
+  }
+
+  state.names = names;
+  resetDistribution();
+  $("#editor").close();
+});
+
+$("#reset").addEventListener("click", () => {
+  resetDistribution();
+
+  if (!state.names.length) {
+    $("#editor").showModal();
+  }
+});
+
+$("#clear").addEventListener("click", () => {
+  if (busy) return;
+  state.names = [];
+  $("#names").value = "";
+  resetDistribution();
+});
+
+$("#save").addEventListener("click", () => {
+  if (busy) return;
+
+  if (!state.names.length || state.remaining.length) {
+    $("#status").textContent =
+      "Нәтижені бекіту үшін барлық оқушыны топтарға бөліңіз.";
+    return;
+  }
+
+  state.fixed = true;
+
+  if (saveState()) {
+    $("#status").textContent =
+      "НӘТИЖЕ БЕКІТІЛДІ · Топ құрамы осы браузерде сақталды.";
+  }
+
+  render();
+});
+
+$("#sound").addEventListener("click", () => {
+  soundEnabled = !soundEnabled;
+
+  $("#sound").textContent = soundEnabled
+    ? "♫ Дыбыс қосулы"
+    : "♫ Дыбыс өшірулі";
+
+  $("#sound").setAttribute("aria-pressed", String(soundEnabled));
+});
+
+/* Үлгі суреттен қораптардың қақпақтарын бөліп алу. */
+function prepareLids() {
+  const image = $("#reference");
+  const crops = [
+    [65, 300, 310, 155],
+    [430, 307, 292, 151],
+    [782, 308, 295, 150]
+  ];
+
+  crops.forEach(([x, y, width, height], index) => {
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+
+      const context = canvas.getContext("2d");
+      const scaleX = image.naturalWidth / 1600;
+      const scaleY = image.naturalHeight / 900;
+
+      context.drawImage(
+        image,
+        x * scaleX,
+        y * scaleY,
+        width * scaleX,
+        height * scaleY,
+        0, 0, width, height
+      );
+
+      boxes[index].querySelector(".lid").src =
+        canvas.toDataURL("image/png");
+    } catch {}
+  });
+}
+
+$("#reference").addEventListener("load", prepareLids);
+
+$("#reference").addEventListener("error", () => {
+  $("#status").textContent =
+    "Сурет табылмады. reference.jpeg файлын index.html жанына жүктеңіз.";
+});
+
+if ($("#reference").complete && $("#reference").naturalWidth) {
+  prepareLids();
+}
+
+/* Сақталған нәтижені қалпына келтіру. */
+try {
+  const saved = JSON.parse(localStorage.getItem(storageKey));
+
+  if (
+    saved &&
+    Array.isArray(saved.names) &&
+    saved.names.every(name => typeof name === "string") &&
+    Array.isArray(saved.remaining) &&
+    Array.isArray(saved.groups) &&
+    saved.groups.length === 3 &&
+    saved.groups.every(group =>
+      Array.isArray(group) &&
+      group.every(name => typeof name === "string")
+    )
+  ) {
+    const all = [...saved.remaining, ...saved.groups.flat()];
+
+    if (
+      all.length === saved.names.length &&
+      new Set(all).size === all.length &&
+      all.every(name => saved.names.includes(name))
+    ) {
+      state = saved;
+
+      $("#status").textContent = state.fixed
+        ? "НӘТИЖЕ БЕКІТІЛДІ · Сақталған топ құрамы қалпына келтірілді."
+        : state.names.length && !state.remaining.length
+          ? "ТОПҚА БӨЛУ АЯҚТАЛДЫ"
+          : "Бөлуді жалғастыру үшін қорапты таңдаңыз.";
+    }
+  }
+} catch {}
+
+showLast();
+render();
+
+if (!state.names.length) {
+  $("#editor").showModal();
+}
+</script>
+</body>
+</html>

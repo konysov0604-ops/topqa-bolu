@@ -11,16 +11,17 @@ body{
   margin:0;
   font-family:Arial,sans-serif;
   background:#020b36;
-  color:white;
+  color:#fff;
 }
-button,textarea{font:inherit}
+button,select,textarea{font:inherit}
 button{cursor:pointer}
 button:disabled{cursor:default}
 main{max-width:1800px;margin:auto}
+
 .toolbar{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
   flex-wrap:wrap;
   gap:12px;
   padding:12px 3%;
@@ -33,11 +34,53 @@ main{max-width:1800px;margin:auto}
   border:1px solid #70caff;
   border-radius:12px;
 }
-.control:hover{filter:brightness(1.2)}
+.control:hover:not(:disabled){filter:brightness(1.2)}
+.control:disabled{opacity:.55}
+
+.selection{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  padding:14px;
+  background:linear-gradient(90deg,#071843,#17246a,#071843);
+  border-bottom:1px solid #4e9cff;
+}
+.selection label{
+  font-weight:bold;
+  font-size:18px;
+}
+.select-wrap{
+  position:relative;
+  width:min(420px,90vw);
+}
+.select-wrap::after{
+  content:"⌄";
+  position:absolute;
+  right:16px;
+  top:9px;
+  font-size:22px;
+  pointer-events:none;
+  color:#fff;
+}
+select{
+  appearance:none;
+  width:100%;
+  padding:13px 42px 13px 16px;
+  border:2px solid #73caff;
+  border-radius:12px;
+  background:#091a48;
+  color:#fff;
+  font-size:18px;
+}
+select:disabled{opacity:.65}
+option{background:#091a48;color:#fff}
+
 .scene{
+  position:relative;
   width:100%;
   aspect-ratio:16/9;
-  position:relative;
   overflow:hidden;
   isolation:isolate;
 }
@@ -51,18 +94,19 @@ main{max-width:1800px;margin:auto}
   top:33%;
   width:20%;
   height:32%;
-  border:0;
   background:transparent;
+  border:0;
   border-radius:30%;
   perspective:700px;
 }
-.box:nth-of-type(1){left:4%}
-.box:nth-of-type(2){left:26.8%}
-.box:nth-of-type(3){left:49%}
+.box1{left:4%}
+.box2{left:26.8%}
+.box3{left:49%}
 .box:hover:not(:disabled){
-  box-shadow:0 0 30px #fff7;
+  box-shadow:0 0 30px #ffffff88;
 }
-.box:focus-visible,.action:focus-visible{
+.box:focus-visible,
+.action:focus-visible{
   outline:4px solid white;
   outline-offset:3px;
 }
@@ -82,7 +126,10 @@ main{max-width:1800px;margin:auto}
   border-radius:30%;
   opacity:0;
   background:radial-gradient(
-    ellipse,#fff 0%,#fff1a8dd 25%,#3cbdff00 72%
+    ellipse,
+    #ffffff 0%,
+    #fff1a8dd 25%,
+    #3cbdff00 72%
   );
   pointer-events:none;
 }
@@ -90,17 +137,25 @@ main{max-width:1800px;margin:auto}
   opacity:1;
   animation:openLid 1.5s ease-in-out;
 }
-.box.open .light{animation:shine 1.5s ease-in-out}
+.box.open .light{
+  animation:shine 1.5s ease-in-out;
+}
 @keyframes openLid{
-  0%,100%{transform:translateY(0) rotateX(0)}
+  0%,100%{
+    transform:translateY(0) rotateX(0);
+  }
   40%,65%{
     transform:translateY(-75%) rotateX(32deg) rotate(-9deg);
   }
 }
 @keyframes shine{
   0%,100%{opacity:0}
-  35%,70%{opacity:1;transform:scale(1.2)}
+  35%,70%{
+    opacity:1;
+    transform:scale(1.2);
+  }
 }
+
 .result{
   position:absolute;
   left:76.5%;
@@ -148,6 +203,7 @@ main{max-width:1800px;margin:auto}
 .reset{left:15.8%;width:19%}
 .save{left:36%;width:25%}
 .clear{left:62.5%;width:22%}
+
 .status{
   margin:12px;
   padding:8px;
@@ -176,9 +232,17 @@ main{max-width:1800px;margin:auto}
   border-color:#f8c756;
   background:linear-gradient(150deg,#60451e,#171127);
 }
-.roster h2{font-size:18px;margin:0 0 14px}
-.roster ol{padding-left:25px;font-size:17px;line-height:1.8}
+.roster h2{
+  font-size:18px;
+  margin:0 0 14px;
+}
+.roster ol{
+  padding-left:25px;
+  font-size:17px;
+  line-height:1.8;
+}
 .empty{color:#b5c6e6}
+
 dialog{
   width:min(560px,94vw);
   padding:26px;
@@ -192,8 +256,14 @@ dialog::backdrop{
   background:#000b;
   backdrop-filter:blur(5px);
 }
-dialog h1{margin-top:0;font-size:26px}
-dialog p{line-height:1.5;color:#cedfff}
+dialog h1{
+  margin-top:0;
+  font-size:26px;
+}
+dialog p{
+  line-height:1.5;
+  color:#cedfff;
+}
 textarea{
   width:100%;
   padding:16px;
@@ -211,7 +281,9 @@ textarea{
   gap:12px;
   margin-top:16px;
 }
-.primary{background:linear-gradient(#8b44e9,#5124a5)}
+.primary{
+  background:linear-gradient(#8b44e9,#5124a5);
+}
 .confetti{
   position:absolute;
   inset:0;
@@ -231,15 +303,26 @@ textarea{
   }
 }
 @media(max-width:650px){
-  .toolbar{justify-content:center;padding:10px}
-  .control{padding:10px;font-size:14px}
+  .toolbar{
+    justify-content:center;
+    padding:10px;
+  }
+  .control{
+    padding:10px;
+    font-size:14px;
+  }
   #progress{
     order:3;
     flex-basis:100%;
     text-align:center;
     font-size:14px;
   }
-  .rosters{grid-template-columns:1fr;gap:10px}
+  .selection label{font-size:16px}
+  select{font-size:16px}
+  .rosters{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
   .roster{padding:14px}
   .status{font-size:16px}
 }
@@ -252,14 +335,37 @@ textarea{
 <body>
 <main>
   <div class="toolbar">
-    <button class="control" id="edit">☷ Оқушылар тізімі</button>
+    <button class="control" id="edit">
+      ☷ Оқушылар тізімі
+    </button>
+
     <span id="progress"></span>
-    <button class="control" id="sound" aria-pressed="true">
+
+    <button
+      class="control"
+      id="sound"
+      aria-pressed="true"
+    >
       ♫ Дыбыс қосулы
     </button>
   </div>
 
-  <section class="scene" aria-label="Математикалық миссия">
+  <div class="selection">
+    <label for="studentSelect">
+      Тақтаға шыққан оқушы:
+    </label>
+
+    <div class="select-wrap">
+      <select id="studentSelect">
+        <option value="">Өз есіміңді таңда</option>
+      </select>
+    </div>
+  </div>
+
+  <section
+    class="scene"
+    aria-label="Математикалық миссия"
+  >
     <img
       class="reference"
       id="reference"
@@ -267,24 +373,37 @@ textarea{
       alt="Графиктер әлемі – Математикалық миссия"
     >
 
-    <button class="box" aria-label="1-топ PARALLEL қорабын ашу">
+    <button
+      class="box box1"
+      aria-label="Көк жасырын қорапты ашу"
+    >
       <span class="light"></span>
       <img class="lid" alt="">
     </button>
 
-    <button class="box" aria-label="2-топ INTERSECTION қорабын ашу">
+    <button
+      class="box box2"
+      aria-label="Күлгін жасырын қорапты ашу"
+    >
       <span class="light"></span>
       <img class="lid" alt="">
     </button>
 
-    <button class="box" aria-label="3-топ COORDINATE қорабын ашу">
+    <button
+      class="box box3"
+      aria-label="Алтын жасырын қорапты ашу"
+    >
       <span class="light"></span>
       <img class="lid" alt="">
     </button>
 
     <div class="result" aria-live="polite">
-      <div class="student" id="student">Өз тобыңды анықта!</div>
-      <div class="team" id="team">Қорапты таңда</div>
+      <div class="student" id="student">
+        Өз есіміңді таңда!
+      </div>
+      <div class="team" id="team">
+        Содан кейін қорапты аш
+      </div>
     </div>
 
     <button
@@ -308,22 +427,34 @@ textarea{
       title="Тізімді тазалау"
     ></button>
 
-    <div class="confetti" id="confetti"></div>
+    <div
+      class="confetti"
+      id="confetti"
+    ></div>
   </section>
 
-  <p class="status" id="status" role="status">
+  <p
+    class="status"
+    id="status"
+    role="status"
+  >
     Бастау үшін оқушылар тізімін енгізіңіз.
   </p>
 
-  <section class="rosters" id="rosters" aria-label="Топ құрамы"></section>
+  <section
+    class="rosters"
+    id="rosters"
+    aria-label="Топ құрамы"
+  ></section>
 </main>
 
 <dialog id="editor">
   <form method="dialog">
     <h1>Оқушылар тізімі</h1>
+
     <p>
-      Әр оқушыны жаңа жолға жазыңыз немесе дайын тізімді
-      толық көшіріп қойыңыз.
+      Әр оқушыны жаңа жолға жазыңыз немесе
+      дайын тізімді толық көшіріп қойыңыз.
     </p>
 
     <textarea
@@ -339,8 +470,18 @@ textarea{
     </p>
 
     <div class="dialog-actions">
-      <button class="control" value="cancel">Жабу</button>
-      <button class="control primary" type="button" id="start">
+      <button
+        class="control"
+        value="cancel"
+      >
+        Жабу
+      </button>
+
+      <button
+        class="control primary"
+        type="button"
+        id="start"
+      >
         Тізімді қолдану
       </button>
     </div>
@@ -351,8 +492,19 @@ textarea{
 "use strict";
 
 const $ = selector => document.querySelector(selector);
-const labels = ["PARALLEL", "INTERSECTION", "COORDINATE"];
+
+const labels = [
+  "PARALLEL",
+  "INTERSECTION",
+  "COORDINATE"
+];
+
+/*
+  Алдыңғы нұсқамен бір сақтау кілті:
+  бұрын енгізілген тізім де қалпына келе алады.
+*/
 const storageKey = "grafikter-mission-github-v1";
+
 const boxes = [...document.querySelectorAll(".box")];
 
 let state = {
@@ -363,64 +515,130 @@ let state = {
   last: null
 };
 
+let selectedName = "";
 let busy = false;
 let soundEnabled = true;
 let audioContext;
 
 function randomIndex(length) {
+  if (!Number.isInteger(length) || length < 1) {
+    throw new Error("Кездейсоқ таңдау үшін тізім бос болмауы керек.");
+  }
+
   const values = new Uint32Array(1);
-  const limit = Math.floor(4294967296 / length) * length;
+  const limit =
+    Math.floor(4294967296 / length) * length;
+
   do {
     crypto.getRandomValues(values);
   } while (values[0] >= limit);
+
   return values[0] % length;
 }
 
 function parseNames(text) {
   const names = text
     .split(/[\n;,]+/)
-    .map(name => name.trim().replace(/^\d+[.)]\s*/, ""))
+    .map(name =>
+      name
+        .trim()
+        .replace(/^\d+[.)]\s*/, "")
+        .replace(/\s+/g, " ")
+    )
     .filter(Boolean);
 
   return [...new Set(names)];
 }
 
-function eligibleGroups() {
-  const minimum = Math.min(...state.groups.map(group => group.length));
+/*
+  Ең аз оқушысы бар топтардан кездейсоқ таңдайды.
+  Сондықтан топтар санының айырмасы бірден аспайды.
+*/
+function chooseBalancedGroup() {
+  const minimum = Math.min(
+    ...state.groups.map(group => group.length)
+  );
 
-  return state.groups
-    .map((group, index) => group.length === minimum ? index : -1)
+  const available = state.groups
+    .map((group, index) =>
+      group.length === minimum ? index : -1
+    )
     .filter(index => index >= 0);
+
+  return available[randomIndex(available.length)];
 }
 
 function saveState() {
   try {
-    localStorage.setItem(storageKey, JSON.stringify(state));
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify(state)
+    );
     return true;
   } catch {
-    $("#status").textContent =
-      "Браузерде сақтау қолжетімсіз. Топ құрамын көшіріп алыңыз.";
     return false;
   }
 }
 
-function showLast() {
+function showResult() {
   if (state.last) {
     $("#student").textContent = state.last.name;
+
     $("#team").textContent =
-      `${state.last.group + 1}-топ · ${labels[state.last.group]}`;
+      `${state.last.group + 1}-топ · ` +
+      labels[state.last.group];
   } else {
-    $("#student").textContent = "Өз тобыңды анықта!";
-    $("#team").textContent = "Қорапты таңда";
+    $("#student").textContent =
+      "Өз есіміңді таңда!";
+
+    $("#team").textContent =
+      "Содан кейін қорапты аш";
   }
 }
 
+function renderStudentSelect() {
+  const select = $("#studentSelect");
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+
+  placeholder.textContent =
+    state.names.length && !state.remaining.length
+      ? "Барлық оқушы топқа бөлінді"
+      : "Өз есіміңді таңда";
+
+  const options = state.remaining.map(name => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    return option;
+  });
+
+  select.replaceChildren(placeholder, ...options);
+
+  if (state.remaining.includes(selectedName)) {
+    select.value = selectedName;
+  } else {
+    selectedName = "";
+    select.value = "";
+  }
+
+  select.disabled =
+    busy ||
+    state.fixed ||
+    !state.remaining.length;
+}
+
 function render() {
-  const assigned = state.names.length - state.remaining.length;
+  const assigned =
+    state.names.length - state.remaining.length;
 
   $("#progress").textContent =
     `Барлығы: ${state.names.length} · ` +
-    `Бөлінді: ${assigned} · Қалды: ${state.remaining.length}`;
+    `Бөлінді: ${assigned} · ` +
+    `Қалды: ${state.remaining.length}`;
+
+  renderStudentSelect();
 
   const articles = state.groups.map((group, index) => {
     const article = document.createElement("article");
@@ -428,7 +646,9 @@ function render() {
 
     const heading = document.createElement("h2");
     heading.textContent =
-      `${index + 1}-топ ${labels[index]} · ${group.length} оқушы`;
+      `${index + 1}-топ ${labels[index]} · ` +
+      `${group.length} оқушы`;
+
     article.append(heading);
 
     if (group.length) {
@@ -444,7 +664,8 @@ function render() {
     } else {
       const empty = document.createElement("p");
       empty.className = "empty";
-      empty.textContent = "Оқушылар әлі бөлінген жоқ";
+      empty.textContent =
+        "Оқушылар әлі бөлінген жоқ";
       article.append(empty);
     }
 
@@ -453,18 +674,20 @@ function render() {
 
   $("#rosters").replaceChildren(...articles);
 
-  const eligible = eligibleGroups();
-
-  boxes.forEach((box, index) => {
+  /*
+    Оқушы есімін таңдағаннан кейін
+    үш қораптың кез келгенін баса алады.
+  */
+  boxes.forEach(box => {
     box.disabled =
       busy ||
       state.fixed ||
       !state.remaining.length ||
-      !eligible.includes(index);
+      !selectedName;
 
-    box.title = !eligible.includes(index)
-      ? "Тең бөлу үшін басқа қорапты таңдаңыз"
-      : `${index + 1}-топ ${labels[index]}`;
+    box.title = selectedName
+      ? `${selectedName}: осы қорапты ашу`
+      : "Алдымен өз есіміңді таңда";
   });
 
   ["reset", "save", "clear", "edit"].forEach(id => {
@@ -476,44 +699,79 @@ function playSound() {
   if (!soundEnabled) return;
 
   try {
-    const Audio = window.AudioContext || window.webkitAudioContext;
+    const Audio =
+      window.AudioContext ||
+      window.webkitAudioContext;
+
     audioContext ||= new Audio();
     audioContext.resume();
 
-    [523.25, 659.25, 783.99, 1046.5].forEach((frequency, index) => {
-      const oscillator = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-      const start = audioContext.currentTime + index * 0.12;
+    [523.25, 659.25, 783.99, 1046.5]
+      .forEach((frequency, index) => {
+        const oscillator =
+          audioContext.createOscillator();
 
-      oscillator.type = "sine";
-      oscillator.frequency.value = frequency;
+        const gain =
+          audioContext.createGain();
 
-      gain.gain.setValueAtTime(0, start);
-      gain.gain.linearRampToValueAtTime(0.12, start + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
+        const start =
+          audioContext.currentTime + index * 0.12;
 
-      oscillator.connect(gain);
-      gain.connect(audioContext.destination);
-      oscillator.start(start);
-      oscillator.stop(start + 0.5);
-    });
+        oscillator.type = "sine";
+        oscillator.frequency.value = frequency;
+
+        gain.gain.setValueAtTime(0, start);
+
+        gain.gain.linearRampToValueAtTime(
+          0.12,
+          start + 0.02
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+          0.001,
+          start + 0.5
+        );
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+
+        oscillator.start(start);
+        oscillator.stop(start + 0.5);
+      });
   } catch {}
 }
 
 function launchConfetti() {
-  const colors = ["#ffd657", "#24c5ff", "#b25aff", "#ffffff"];
+  const colors = [
+    "#ffd657",
+    "#24c5ff",
+    "#b25aff",
+    "#ffffff"
+  ];
 
   for (let index = 0; index < 65; index++) {
     const particle = document.createElement("i");
     particle.className = "particle";
 
-    particle.style.left = `${20 + randomIndex(65)}%`;
-    particle.style.top = `${25 + randomIndex(25)}%`;
-    particle.style.background = colors[randomIndex(colors.length)];
-    particle.style.setProperty("--dx", `${randomIndex(400) - 200}px`);
-    particle.style.animationDelay = `${randomIndex(250)}ms`;
+    particle.style.left =
+      `${20 + randomIndex(65)}%`;
+
+    particle.style.top =
+      `${25 + randomIndex(25)}%`;
+
+    particle.style.background =
+      colors[randomIndex(colors.length)];
+
+    particle.style.setProperty(
+      "--dx",
+      `${randomIndex(400) - 200}px`
+    );
+
+    particle.style.animationDelay =
+      `${randomIndex(250)}ms`;
 
     $("#confetti").append(particle);
+
     setTimeout(() => particle.remove(), 2100);
   }
 }
@@ -525,46 +783,108 @@ function resetDistribution() {
   state.groups = [[], [], []];
   state.fixed = false;
   state.last = null;
+  selectedName = "";
 
-  showLast();
+  showResult();
 
   $("#status").textContent = state.names.length
-    ? "Жасырын қорапты таңда да, өз тобыңды біл!"
+    ? "Алдымен өз есіміңді таңда, содан кейін кез келген қорапты аш!"
     : "Бастау үшін оқушылар тізімін енгізіңіз.";
 
-  saveState();
+  if (!saveState()) {
+    $("#status").textContent +=
+      " Браузерде сақтау қолжетімсіз.";
+  }
+
   render();
 }
 
-boxes.forEach((box, groupIndex) => {
+$("#studentSelect").addEventListener("change", event => {
+  if (busy || state.fixed) return;
+
+  const value = event.target.value;
+
+  selectedName = state.remaining.includes(value)
+    ? value
+    : "";
+
+  if (selectedName) {
+    $("#student").textContent = selectedName;
+    $("#team").textContent = "Қорапты таңда";
+
+    $("#status").textContent =
+      `${selectedName}, кез келген қорапты таңда!`;
+  } else {
+    showResult();
+
+    $("#status").textContent =
+      "Алдымен тақтаға шыққан оқушы өз есімін таңдасын.";
+  }
+
+  render();
+});
+
+boxes.forEach(box => {
   box.addEventListener("click", () => {
     if (
       busy ||
       state.fixed ||
-      !state.remaining.length ||
-      !eligibleGroups().includes(groupIndex)
+      !selectedName ||
+      !state.remaining.length
     ) return;
+
+    /*
+      Кездейсоқ оқушы таңдалмайды!
+      Тек оқушы өзі таңдаған есім пайдаланылады.
+    */
+    const name = selectedName;
+    const studentIndex =
+      state.remaining.indexOf(name);
+
+    if (studentIndex === -1) {
+      selectedName = "";
+      render();
+      return;
+    }
+
+    const groupIndex = chooseBalancedGroup();
 
     busy = true;
 
-    const studentIndex = randomIndex(state.remaining.length);
-    const name = state.remaining.splice(studentIndex, 1)[0];
-
+    state.remaining.splice(studentIndex, 1);
     state.groups[groupIndex].push(name);
-    state.last = { name, group: groupIndex };
+    state.last = {
+      name,
+      group: groupIndex
+    };
 
-    saveState();
+    selectedName = "";
+
+    const stored = saveState();
+
     render();
+
     box.classList.add("open");
     playSound();
 
+    $("#student").textContent = name;
+    $("#team").textContent = "Тобың анықталуда…";
+    $("#status").textContent =
+      `${name} қорапты ашып жатыр…`;
+
     setTimeout(() => {
-      showLast();
+      showResult();
       launchConfetti();
 
-      $("#status").textContent = state.remaining.length
-        ? `${name} — ${groupIndex + 1}-топта! Келесі қорапты таңдаңыз.`
-        : "ТОПҚА БӨЛУ АЯҚТАЛДЫ";
+      $("#status").textContent =
+        state.remaining.length
+          ? `${name} — ${groupIndex + 1}-топта! Келесі оқушы өз есімін таңдасын.`
+          : "ТОПҚА БӨЛУ АЯҚТАЛДЫ";
+
+      if (!stored) {
+        $("#status").textContent +=
+          " Браузерде сақтау қолжетімсіз.";
+      }
     }, 650);
 
     setTimeout(() => {
@@ -576,7 +896,15 @@ boxes.forEach((box, groupIndex) => {
 });
 
 $("#edit").addEventListener("click", () => {
-  $("#names").value = state.names.join("\n");
+  if (busy) return;
+
+  $("#names").value =
+    state.names.join("\n");
+
+  $("#hint").textContent =
+    "Бірдей жазылған есімдер бір рет қана алынады. " +
+    "Аттас оқушылардың тегін де жазыңыз.";
+
   $("#editor").showModal();
 });
 
@@ -586,12 +914,28 @@ $("#start").addEventListener("click", () => {
   if (!names.length) {
     $("#hint").textContent =
       "Кемінде бір оқушының аты-жөнін енгізіңіз.";
+
     $("#names").focus();
     return;
   }
 
-  state.names = names;
-  resetDistribution();
+  /*
+    Өзгермеген тізімді қайта қолдану
+    дайын топтарды өшірмейді.
+  */
+  const unchanged =
+    names.length === state.names.length &&
+    names.every((name, index) =>
+      name === state.names[index]
+    );
+
+  if (!unchanged) {
+    state.names = names;
+    resetDistribution();
+  } else {
+    render();
+  }
+
   $("#editor").close();
 });
 
@@ -605,17 +949,23 @@ $("#reset").addEventListener("click", () => {
 
 $("#clear").addEventListener("click", () => {
   if (busy) return;
+
   state.names = [];
   $("#names").value = "";
+
   resetDistribution();
 });
 
 $("#save").addEventListener("click", () => {
   if (busy) return;
 
-  if (!state.names.length || state.remaining.length) {
+  if (
+    !state.names.length ||
+    state.remaining.length
+  ) {
     $("#status").textContent =
       "Нәтижені бекіту үшін барлық оқушыны топтарға бөліңіз.";
+
     return;
   }
 
@@ -624,6 +974,11 @@ $("#save").addEventListener("click", () => {
   if (saveState()) {
     $("#status").textContent =
       "НӘТИЖЕ БЕКІТІЛДІ · Топ құрамы осы браузерде сақталды.";
+  } else {
+    state.fixed = false;
+
+    $("#status").textContent =
+      "Нәтижені сақтау мүмкін болмады. Топ құрамын көшіріп алыңыз.";
   }
 
   render();
@@ -636,12 +991,16 @@ $("#sound").addEventListener("click", () => {
     ? "♫ Дыбыс қосулы"
     : "♫ Дыбыс өшірулі";
 
-  $("#sound").setAttribute("aria-pressed", String(soundEnabled));
+  $("#sound").setAttribute(
+    "aria-pressed",
+    String(soundEnabled)
+  );
 });
 
-/* Үлгі суреттен қораптардың қақпақтарын бөліп алу. */
+/* Үлгі суреттен қақпақтарды бөліп алу. */
 function prepareLids() {
   const image = $("#reference");
+
   const crops = [
     [65, 300, 310, 155],
     [430, 307, 292, 151],
@@ -650,13 +1009,20 @@ function prepareLids() {
 
   crops.forEach(([x, y, width, height], index) => {
     try {
-      const canvas = document.createElement("canvas");
+      const canvas =
+        document.createElement("canvas");
+
       canvas.width = width;
       canvas.height = height;
 
-      const context = canvas.getContext("2d");
-      const scaleX = image.naturalWidth / 1600;
-      const scaleY = image.naturalHeight / 900;
+      const context =
+        canvas.getContext("2d");
+
+      const scaleX =
+        image.naturalWidth / 1600;
+
+      const scaleY =
+        image.naturalHeight / 900;
 
       context.drawImage(
         image,
@@ -664,7 +1030,10 @@ function prepareLids() {
         y * scaleY,
         width * scaleX,
         height * scaleY,
-        0, 0, width, height
+        0,
+        0,
+        width,
+        height
       );
 
       boxes[index].querySelector(".lid").src =
@@ -673,52 +1042,92 @@ function prepareLids() {
   });
 }
 
-$("#reference").addEventListener("load", prepareLids);
+$("#reference").addEventListener(
+  "load",
+  prepareLids
+);
 
 $("#reference").addEventListener("error", () => {
   $("#status").textContent =
     "Сурет табылмады. reference.jpeg файлын index.html жанына жүктеңіз.";
 });
 
-if ($("#reference").complete && $("#reference").naturalWidth) {
+if (
+  $("#reference").complete &&
+  $("#reference").naturalWidth
+) {
   prepareLids();
 }
 
-/* Сақталған нәтижені қалпына келтіру. */
+/* Бұрын сақталған тізімді қалпына келтіру. */
 try {
-  const saved = JSON.parse(localStorage.getItem(storageKey));
+  const saved = JSON.parse(
+    localStorage.getItem(storageKey)
+  );
 
-  if (
+  const validShape =
     saved &&
     Array.isArray(saved.names) &&
-    saved.names.every(name => typeof name === "string") &&
+    saved.names.every(name =>
+      typeof name === "string"
+    ) &&
     Array.isArray(saved.remaining) &&
+    saved.remaining.every(name =>
+      typeof name === "string"
+    ) &&
     Array.isArray(saved.groups) &&
     saved.groups.length === 3 &&
     saved.groups.every(group =>
       Array.isArray(group) &&
-      group.every(name => typeof name === "string")
-    )
-  ) {
-    const all = [...saved.remaining, ...saved.groups.flat()];
+      group.every(name =>
+        typeof name === "string"
+      )
+    );
 
-    if (
+  if (validShape) {
+    const all = [
+      ...saved.remaining,
+      ...saved.groups.flat()
+    ];
+
+    const validContents =
+      new Set(saved.names).size === saved.names.length &&
       all.length === saved.names.length &&
       new Set(all).size === all.length &&
-      all.every(name => saved.names.includes(name))
-    ) {
-      state = saved;
+      all.every(name => saved.names.includes(name));
+
+    if (validContents) {
+      const validLast =
+        saved.last &&
+        Number.isInteger(saved.last.group) &&
+        saved.last.group >= 0 &&
+        saved.last.group < 3 &&
+        saved.groups[saved.last.group]
+          .includes(saved.last.name);
+
+      state = {
+        names: saved.names,
+        remaining: saved.remaining,
+        groups: saved.groups,
+        fixed:
+          saved.fixed === true &&
+          saved.names.length > 0 &&
+          saved.remaining.length === 0,
+        last: validLast ? saved.last : null
+      };
 
       $("#status").textContent = state.fixed
         ? "НӘТИЖЕ БЕКІТІЛДІ · Сақталған топ құрамы қалпына келтірілді."
         : state.names.length && !state.remaining.length
           ? "ТОПҚА БӨЛУ АЯҚТАЛДЫ"
-          : "Бөлуді жалғастыру үшін қорапты таңдаңыз.";
+          : state.names.length
+            ? "Тақтаға шыққан оқушы өз есімін таңдасын."
+            : "Бастау үшін оқушылар тізімін енгізіңіз.";
     }
   }
 } catch {}
 
-showLast();
+showResult();
 render();
 
 if (!state.names.length) {
